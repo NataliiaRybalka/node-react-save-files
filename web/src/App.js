@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axios from 'axios';
 import './App.css';
 
 function App() {
@@ -62,12 +63,10 @@ function App() {
 		if (cards[0].file) formData.append('file', cards[0].file);
 		Object.entries(cards[0]).map(([key, value]) => formData.append(key, value));
 
-		await fetch(`http://localhost:4000//metaphorical-cards`, {
-			method: 'POST',
-			body: formData,
+		await axios.post(`http://localhost:4000/`, formData, {
 			headers: {
 				'Content-Type': 'multipart/form-data; boundary=something',
-			},
+			}
 		});
 	};
 
@@ -87,9 +86,6 @@ function App() {
 						<tr key={cardI}>
 							<td className='adminCardTableFile'>
 								<input type='file' name='file' onChange={(e) => onChangeInput(e, cardI)} />
-									{(card && card.file) && 
-										<img src={card.fileUrl} alt={card.fileUrl.name} className='previewCard' />
-									}
 							</td>
 							<td>
 								<textarea name='description' value={card.description} rows='5' onChange={(e) => onChangeInput(e, cardI)} />
