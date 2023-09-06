@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+
 import './App.css';
 
 function App() {
@@ -20,13 +21,23 @@ function App() {
 		}]);
 	};
 
-	const onChangeInput = (e, cardI) => {
+	const onChangeInput = async (e, cardI) => {
 		if (e.target.name === 'file') {
+			const file = e.target.files[0]
+			const formData = new FormData();
+			if (file) formData.append('file', file);
+
+			const resp = await axios.post(`http://localhost:4000/file`, formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data; boundary=something',
+				}
+			});
+
 			const newState = cards.map((tableRow, ind) => {
 				if (ind === cardI) {
 					return {
 						...tableRow,
-						file: e.target.files[0],
+						file: resp.data[0],
 						fileUrl: window.URL.createObjectURL(e.target.files[0]),
 					};
 				}
@@ -50,23 +61,12 @@ function App() {
 	};
 
 	const saveCards = async () => {
-		// const cardsFormData = [];
-		// cards.forEach(card => {
-		// 	const formData = new FormData();
-		// 	if (card.image) formData.append('file', card.image);
-		// 	Object.entries(card).map(([key, value]) => formData.append(key, value));
-
-		// 	cardsFormData.push(formData);
-		// });
-		const formData = new FormData();
-		console.log(cards[0].file);
-		if (cards[0].file) formData.append('file', cards[0].file);
-		Object.entries(cards[0]).map(([key, value]) => formData.append(key, value));
-
-		await axios.post(`http://localhost:4000/`, formData, {
+		await fetch(`http://localhost:4000/`, {
+			method: 'POST',
+			body: JSON.stringify(cards),
 			headers: {
-				'Content-Type': 'multipart/form-data; boundary=something',
-			}
+				'Content-Type': "application/json",
+			},
 		});
 	};
 

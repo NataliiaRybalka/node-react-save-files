@@ -24,11 +24,13 @@ app.use(cors());
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
-app.post('/', uploadImage.array('file', 100), (req, res) => {
+app.post('/file', uploadImage.array('file', 100), (req, res) => {
 	const body = req.files;
-	console.log(body);
-	
-	res.json('ok');
+	res.json(body);
+});
+app.post('/', (req, res) => {
+	const body = req.body;
+	res.json(body);
 });
 
 app.listen(PORT, () => {
